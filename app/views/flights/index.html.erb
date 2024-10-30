@@ -3,25 +3,36 @@
     <%= form.collection_select :departure_airport_id, Airport.all, :id, :code %>
     <%= form.label :arrival_airport_id %>
     <%= form.collection_select :arrival_airport_id, Airport.all, :id, :code %>
-    <%= form.label :number_of_passangers %>
-    <%= form.select :number_of_passangers, 1..4 %>
+    <%= form.label :number_of_passengers %>
+    <%= form.select :number_of_passengers, 1..4 %>
     <%= form.label :start_datetime, "Date" %>
     <%= form.select :start_datetime, (Date.today.. 7.days.from_now).map { |date| date.strftime("%m/%d") } %>
-    <%= form.submit %>
+    <%= form.submit 'Submit', class: 'btn btn-primary' %>
 <% end %>
 
-<div class="info">
-    <div class="date">date: <%= params[:start_datetime] %></div>
-    <div class="deperture_airport">Departure airport: <%= Airport.where("id == ?", params[:departure_airport_id]).pick(:code) %></div>
-    <div class="arrival_airport">Arrival airport: <%= Airport.where("id == ?", params[:arrival_airport_id]).pick(:code) %></div>
-    <div class="number_of_passangers">Number of passangers: <%= params[:number_of_passangers] %></div>
-</div>
+<%= render "shared/flight_info", {
+    start_datetime: params[:start_datetime],
+    departure_airport_id: Airport.where("id = ?", params[:departure_airport_id]).pick(:code),
+    arrival_airport_id: Airport.where("id = ?", params[:arrival_airport_id]).pick(:code),
+    number_of_passengers: params[:number_of_passengers]
+} %>
 
-<% @possible_flights.each do |flight| %>
+<%= form_with url: new_booking_path, method: :get do |form| %>
+  <% @possible_flights.each do |flight| %>
     <div class="flight">
-        code: <%= flight.id %>
-        from: <%= flight.departure_airport.code %>
-        to: <%= flight.arrival_airport.code %>
-        duration: <%= flight.duration %>
+      <%= form.radio_button :flight_id, flight.id, id: "flight_#{flight.id}" %>
+      <%= form.label "flight_#{flight.id}", "Fast Jet, duration: #{flight.duration} h" %>
     </div>
+  <% end %>
+  
+  <%= form.hidden_field :number_of_passengers, value: params[:number_of_passengers] %>
+  <%= form.hidden_field :start_datetime, value: params[:start_datetime] %>
+
+  <% if @possible_flights.empty? %>
+    <p>No flights available</p>
+  <% end %>
+  
+  <%= form.submit 'Book Flight' %>
 <% end %>
+
+
