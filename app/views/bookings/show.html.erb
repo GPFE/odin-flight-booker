@@ -1,0 +1,16 @@
+<h1><%= @booking.id %></h1>
+<div class="ticket-num-description">your ticket number</div>
+<div class="container">
+    <div class="date">Date: <%= @flight.start_datetime || "Not specified" %></div>
+    <div class="departure_airport">Departure airport: <%= @flight.departure_airport.code || "Not specified" %></div>
+    <div class="arrival_airport">Arrival airport: <%= @flight.arrival_airport.code || "Not specified" %></div>
+    <div class="number_of_passengers">Number of passengers: <%= @booking.passengers.count || 0 %></div>
+</div>
+
+<% @booking.passengers.each_with_index do |passenger, index| %>
+<div class="container">
+    <div>Data for <%= index + 1 %>. passenger:</div>
+    <div class="name">name: <%= passenger.name %></div>
+    <div class="email">email: <%= passenger.email %></div>
+</div>
+<% end %>

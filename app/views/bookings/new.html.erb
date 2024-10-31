@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="date">Date: <%= params[:start_datetime] || "Not specified" %></div>
+    <div class="departure_airport">Departure airport: <%= @departure_airport_id || "Not specified" %></div>
+    <div class="arrival_airport">Arrival airport: <%= @arrival_airport_id || "Not specified" %></div>
+    <div class="number_of_passengers">Number of passengers: <%= params[:number_of_passengers] || 0 %></div>
+</div>
+
+<%= form_with model: @booking do |form| %>
+  <%= form.fields_for :passengers do |passenger| %>
+    <div>
+      <%= passenger.label :name %>
+      <%= passenger.text_field :name %>
+    </div>
+    <div>
+      <%= passenger.label :email %>
+      <%= passenger.text_field :email %>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :flight_id, value: params[:flight_id] %>
+  <%= form.submit "Create Booking" %>
+<% end %>
