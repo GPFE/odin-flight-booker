@@ -5,18 +5,32 @@
     <div class="number_of_passengers">Number of passengers: <%= params[:number_of_passengers] || 0 %></div>
 </div>
 
-<%= form_with model: @booking do |form| %>
-  <%= form.fields_for :passengers do |passenger| %>
-    <div>
-      <%= passenger.label :name %>
-      <%= passenger.text_field :name %>
+
+<div data-controller="passenger">
+  <%= form_with model: @booking, local: true do |form| %>
+    <%= form.hidden_field :flight_id, value: params[:flight_id] %>
+
+    <div id="passenger-forms">
     </div>
-    <div>
-      <%= passenger.label :email %>
-      <%= passenger.text_field :email %>
-    </div>
+
+    <template data-passenger-target="form">
+      <div class="passenger-fields">
+        <%= form.fields_for :passengers, Passenger.new do |passenger| %>
+          <div>
+            <%= passenger.hidden_field%>
+            <%= passenger.label :name %>
+            <%= passenger.text_field :name %>
+          </div>
+          <div>
+            <%= passenger.label :email %>
+            <%= passenger.text_field :email %>
+          </div>
+        <% end %>
+      </div>
+    </template>
+
+    <%= form.submit "Create Booking" %>
   <% end %>
 
-  <%= form.hidden_field :flight_id, value: params[:flight_id] %>
-  <%= form.submit "Create Booking" %>
-<% end %>
+  <button type="button" data-action="passenger#add">Add Passenger</button>
+</div>

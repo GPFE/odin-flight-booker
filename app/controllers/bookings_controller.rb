@@ -3,12 +3,10 @@ class BookingsController < ApplicationController
     @flight = Flight.includes(:departure_airport, :arrival_airport).find(params[:flight_id])
     @departure_airport_id = @flight.departure_airport_id
     @arrival_airport_id = @flight.arrival_airport_id
+    @number_of_passengers = params[:number_of_passengers].to_i
 
     @booking = Booking.new
-    @number_of_passengers = params[:number_of_passengers].to_i
-    @number_of_passengers.times do
-      passenger = @booking.passengers.build
-    end
+    @booking.passengers.build
   end
 
   def create
@@ -16,8 +14,7 @@ class BookingsController < ApplicationController
     p params[:booking][:flight_id]
     @flight = Flight.find(params[:booking][:flight_id])
     @booking = @flight.bookings.new(booking_params)
-    # @booking.passengers.build(params[:booking][:passenger_attributes][:id][:name, :email])
-    # @booking.passengers.build(params[:id][:name], params[:id][:email])
+
     if @booking.save
       redirect_to booking_path(@booking.id)
     else
@@ -34,6 +31,6 @@ class BookingsController < ApplicationController
   private
 
   def booking_params
-    params.require(:booking).permit(:flight_id, passengers_attributes: [:id, :name, :email])
+    params.require(:booking).permit(:flight_id, passengers_attributes: [:name, :email])
   end
 end
